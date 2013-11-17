@@ -1,0 +1,93 @@
+#!/bin/bash
+echo "Welcome to a free shell service,
+you are welcome to do anything you would like,
+as long as you do not abuse this service or
+conduct any malicious act, we encourage users
+of all skill to give us a try.
+
+We offer a free subdomain with your subscription
+to our free service. Remember, it is important
+for you to respect our service, as other users
+do like using us. Also, you may freely browse
+the web by entering w3m then the url. If you have
+ any questions or concerns, please email them us.
+
+Thanks again for using our service, and have a safe day.
+
+Welcome to a free shell service, powered by Debian."
+
+num2=`echo $RANDOM` # create a ramdom number to avoid floods.
+echo "Magic Number: $num2"
+echo "What is the Magic Number?"
+read num1
+if [ "$num2" != "$num1" ] ; then
+# Avoid Flows
+echo "Sorry, Wrong Magic Number!"
+read null
+exit
+fi
+echo "Please enter your username"
+echo -n ".username: "
+read usuario
+if [ "$usuario" = "" ] ; then
+	# username is null.
+	echo -n "Invalid username!"
+	read null
+	exit
+fi
+
+hacklogin=$(echo "$usuario" | tr -d "|;\1404247134176$")
+if [ ! "$usuario" == "$hacklogin" ] ; then
+	# dangerous caracteres.
+	echo "Invalid Username!"
+	read null
+	exit
+fi
+
+# verify if username already exist.
+safelogin=$(echo "$usuario"|tr -cd "[:alnum:]")
+password=$(echo $RANDOM$RANDOM)
+existe=`sudo cat /etc/shadow|sed 'y/[:]/[ ]/'|awk '{print $1}'|grep $safelogin`
+existe=`echo $?`
+
+if [ "$existe" = 0 ] ; then
+	# username already in system.
+	echo "username: '$safelogin' already in our system!"
+	read null
+	exit
+fi
+
+respuesta="y"
+echo "Ready to add $usuario in our system..
+confirm 'y' to add, any other character to abort..
+by answering 'y' you agree to our terms and policies."
+
+echo -n "Correct (y/n)? "
+read correcto
+if [ "$correcto" != "$respuesta" ] ; then
+	# didn.t not accept our terms, so .byebye.
+	echo "Aborting creation, thanks."
+	read null
+	exit
+fi
+
+# Lets create our new user.
+echo "Creating your $usuario"
+
+#sudo useradd -g newshell -s /bin/bash -p `mkpasswd xxx` test2
+sudo useradd -m -g freeshell -s /bin/bash -p `mkpasswd $password` $safelogin
+
+echo "you been issue this password: $password
+
+User succesfully created!
+Thank you for registering with us.
+To login into your new shell use:
+
+ssh -l $safelogin example.com
+
+username: $safelogin
+password: $password
+"
+
+read null
+exit
