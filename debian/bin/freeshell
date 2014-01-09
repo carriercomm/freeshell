@@ -1,5 +1,24 @@
 #!/bin/bash
-echo "Welcome to a free shell service,
+
+# check for valid email address
+chke() {
+	BASIC_RESULT=$(echo $1 | egrep "^(([-a-zA-Z0-9\!#\$%\&\'*+/=?^_\`{\|}~])+\.)*[-a-zA-Z0-9\!#\$%\&\'*+/=?^_\`{\|}~]+@\w((-|\w)*\w)*\.(\w((-|\w)*\w)*\.)*\w{2,4}$")
+
+	if [ "x$BASIC_RESULT" = "x" ]; then echo 1; exit; fi
+
+	INTERMEDIATE_RESULT=$(echo $1 | egrep "^(([-a-zA-Z0-9\!#\$%\&\'*+/=?^_\`{\|}~])+\.)*[-a-zA-Z0-9\!#\$%\&\'*+/=?^_\`{\|}~]+@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(\w((-|\w)*\w)*\.(\w((-|\w)*\w)*\.)*\w{2,4}))$")
+
+	if [ "x$INTERMEDIATE_RESULT" = "x" ]; then echo 1; exit; fi
+
+	ADVANCED_RESULT=$(echo $1 | grep -E "^(([-a-zA-Z0-9\!#\$%\&\'*+/=?^_\`{\|}~]+|(\"([][,:;<>\&@a-zA-Z0-9\!#\$%\&\'*+/=?^_\`{\|}~-]|(\\\\[\\ \"]))+\"))\.)*([-a-zA-Z0-9\!#\$%\&\'*+/=?^_\`{\|}~]+|(\"([][,:;<>\&@a-zA-Z0-9\!#\$%\&\'*+/=?^_\`{\|}~-]|(\\\\[\\ \"]))+\"))@\w((-|\w)*\w)*\.(\w((-|\w)*\w)*\.)*\w{2,4}$")
+
+	if [ "x$ADVANCED_RESULT" = "x" ]; then echo 1; exit; fi
+exit 0
+} #chke (check email)
+
+echo "
+
+Welcome to a free shell service,
 you are welcome to do anything you would like,
 as long as you do not abuse this service or
 conduct any malicious act, we encourage users
@@ -14,80 +33,182 @@ the web by entering w3m then the url. If you have
 
 Thanks again for using our service, and have a safe day.
 
-Welcome to a free shell service, powered by Debian."
+Welcome to a free shell service, powered by Debian.
 
-num2=`echo $RANDOM` # create a ramdom number to avoid floods.
-echo "Magic Number: $num2"
-echo "What is the Magic Number?"
-read num1
+"
+
+num2=$(echo $RANDOM) # create a ramdom number to avoid floods.
+echo "
+Magic Number: $num2
+(type in that number, after finish hit ENTER, you will not see any echoes while typing)
+
+What is the Magic Number?"
+read -s num1
+
 if [ "$num2" != "$num1" ] ; then
-# Avoid Flows
-echo "Sorry, Wrong Magic Number!"
-read null
-exit
+	# Avoid Flows
+	echo "Sorry, Wrong Magic Number!"
+	exit
 fi
-echo "Please enter your username"
-echo -n ".username: "
+
+echo "
+
+Use valid characters while creating your username or 
+your username will be rejected (username must be at least 5 characters long)
+
+Please enter your new username"
+echo -n "username: "
 read usuario
+
 if [ "$usuario" = "" ] ; then
 	# username is null.
-	echo -n "Invalid username!"
-	read null
+	echo "you must provide a valid username."
 	exit
 fi
 
+
 hacklogin=$(echo "$usuario" | tr -d "|;\1404247134176$")
-if [ ! "$usuario" == "$hacklogin" ] ; then
+#if [ ! "$usuario" == "$hacklogin" ] ; then
+if [[ $usario = *[![abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]]* ]]; then
 	# dangerous caracteres.
 	echo "Invalid Username!"
-	read null
 	exit
+fi
+
+if (( ${#usuario} <= 3 )); then
+        echo "Username too short, you need more than 4 characters"
+        exit
 fi
 
 # verify if username already exist.
 safelogin=$(echo "$usuario"|tr -cd "[:alnum:]")
-password=$(echo $RANDOM$RANDOM)
-existe=`sudo cat /etc/shadow|sed 'y/[:]/[ ]/'|awk '{print $1}'|grep $safelogin`
-existe=`echo $?`
+echo "
+please enter a password to be use to access your account.
+(use more than 8 characters)
+password?"
+read -s password
+
+echo "
+Please retype the password?"
+read -s password2
+
+if [ "$password" != "$password2" ] ; then
+        # Avoid Flows
+        echo "Password mismatch!"
+        exit
+fi
+
+if (( ${#password} < 8 )); then
+	echo "Password too short, you need more than 8 characters"
+	exit
+fi
+
+#password=$(echo $RANDOM$RANDOM)
+existe=$(sudo cat /etc/shadow|sed 'y/[:]/[ ]/'|awk '{print $1}'|grep "$safelogin")
+existe=$(echo $?)
 
 if [ "$existe" = 0 ] ; then
 	# username already in system.
 	echo "username: '$safelogin' already in our system!"
-	read null
 	exit
 fi
 
-respuesta="y"
-echo "Ready to add $usuario in our system..
-confirm 'y' to add, any other character to abort..
-by answering 'y' you agree to our terms and policies."
+echo "
+Please provide a valid email address, your
+new username details will be send to you
+using this address!
 
-echo -n "Correct (y/n)? "
+Whats your email address?"
+read em
+
+echo "
+Please confirm email address?"
+read -s em2
+
+if [ "$em" != "$em2" ]; then
+  echo "Email addresses mismatch!"
+  exit
+fi
+
+cherror=$(chke "$em")
+if (( "$cherror" )); then echo "Invalid email address!";exit; fi
+
+echo "
+
+Email address match!
+
+Please note, after user creation, '$usuario' details will be send to:
+
+$em
+
+Please check your Spam Box if you do not see an email containing
+your user information or request a new email to:
+
+new@leprechuan.net
+
+This email will contain important information with your credentials
+to access our service and details about your znc, emails, public_html
+ssh and soo on, make sure you read it!
+
+"
+respuesta="y"
+echo "
+
+Ready to add '$usuario' in our system..
+
+Please confirm 'y' to add your user, any other character to abort..
+By answering 'y' you agree to our terms and policies."
+
+echo -n "Are you sure you wnat to add '$usuario'? "
 read correcto
 if [ "$correcto" != "$respuesta" ] ; then
 	# didn.t not accept our terms, so .byebye.
 	echo "Aborting creation, thanks."
-	read null
+	read 
 	exit
 fi
 
 # Lets create our new user.
-echo "Creating your $usuario"
+echo "
+Creating your new user: $usuario
+"
 
-#sudo useradd -g newshell -s /bin/bash -p `mkpasswd xxx` test2
-sudo useradd -m -g freeshell -s /bin/bash -p `mkpasswd $password` $safelogin
+#sudo useradd -g newshell -s /bin/bash -p $(mkpasswd xxx) test2
+thepass=$(mkpasswd "$password")
+sudo useradd -m -g freeshell -s /bin/bash -p "$thepass" "$safelogin"
+sudo mkdir -p "/home/$usuario/public_html"
+sudo chmod 710 "/home/$usuario"
+sudo chgrp www-data  "/home/$usuario/public_html"
+#sudo mkdir -p "/home/$usuario/public-html"
+sudo chmod -R 750 "/home/$usuario/public_html"
+sudo chgrp www-data "/home/$usuario/public_html"
+#sudo useradd -m -g freeshell -s /bin/bash -p "$thepass" "$safelogin"
 
-echo "you been issue this password: $password
+# sudo su znc
+# cd .znc
+# cd configs
+# ls -al znc.conf
+# uglypass=$RANDOM$RANDOM;salt=$uglypass;password=$(mkpasswd $uglypass);  znchash=$(echo -n "$password$salt" | sha256sum | cut -f1 -d ' '); echo $znchash
+
+
+
+echo "You been issue this password: $password
 
 User succesfully created!
 Thank you for registering with us.
 To login into your new shell use:
 
-ssh -l $safelogin example.com
+ssh -l $safelogin leprechuan.net
+
+From IPV6:
+ssh -l $safelogin ipv6.leprechuan.net
 
 username: $safelogin
 password: $password
-"
 
-read null
+
+Please, hit Enter to end."
+
+read 
 exit
+
