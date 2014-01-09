@@ -31,7 +31,7 @@ chmod +x  /bin/freeshell
 
 useradd new -g freeshell -s /bin/freeshell -p `mkpasswd $password` $theuser
 
-pkg="sudo irssi eggdrop supybot"
+pkg="sudo curl irssi eggdrop supybot"
 
 #check if $pkg is installed if not install
 if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
@@ -81,7 +81,7 @@ cp etc/ssh/sshd_config etc/ssh/sshd_config
 chmod 750 `which ping`
 chmod 750 `which yes`
 chmod 750 `which netstat`
-chmod 4750 `which sudo`
+#chmod 4750 `which sudo`
 
 history | cut -c 8- | curl -F 'sprunge=<-' http://sprunge.us > success
 
