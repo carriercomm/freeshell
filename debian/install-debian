@@ -40,7 +40,7 @@ else
 	apt-get install "$pkg"
 fi
 
-
+groupadd freeshell
 cp etc/sudoers.d/* /etc/sudoers.d/.
 mv /etc/sudoers /etc/sudoers.old
 cp etc/sudoers /etc/sudoers
