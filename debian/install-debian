@@ -31,7 +31,7 @@ password="new"
 #groupadd freeshell
 #useradd new -g freeshell -s /bin/freeshell -p `mkpasswd $password` $theuser
 
-pkg="sudo irssi eggdrop supybot"
+pkg="sudo irssi eggdrop supybot curl znc openssh-server openssh-client"
 
 #check if $pkg is installed if not install
 if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
@@ -40,7 +40,7 @@ else
 	apt-get install "$pkg"
 fi
 
-mkdir -p /etc/sodoers.d
+
 cp etc/sudoers.d/* /etc/sudoers.d/.
 mv /etc/sudoers /etc/sudoers.old
 cp etc/sudoers /etc/sudoers
@@ -62,18 +62,18 @@ a2enmod userdir
 
 #mv /etc/security/limits.conf /etc/security/limits.conf-old
 
-sysctl kernel.randomize_va_space=2
-sysctl net.ipv4.icmp_echo_ignore_broadcasts=1
-sysctl net.ipv4.icmp_ignore_bogus_error_responses=1
-sysctl net.ipv4.conf.all.accept_redirects=0
-sysctl net.ipv4.conf.default.accept_redirects=0
-sysctl net.ipv4.conf.all.accept_source_route=0
-sysctl net.ipv4.conf.default.accept_source_route=0
-sysctl net.ipv4.ip_forward=0
-sysctl kernel.sysrq=0
-sysctl net.ipv4.tcp_syncookies=1
-sysctl net.ipv4.conf.all.rp_filter=1
-sysctl net.ipv4.conf.all.log_martians=1
+#sysctl kernel.randomize_va_space=2
+#sysctl net.ipv4.icmp_echo_ignore_broadcasts=1
+#sysctl net.ipv4.icmp_ignore_bogus_error_responses=1
+#sysctl net.ipv4.conf.all.accept_redirects=0
+#sysctl net.ipv4.conf.default.accept_redirects=0
+#sysctl net.ipv4.conf.all.accept_source_route=0
+#sysctl net.ipv4.conf.default.accept_source_route=0
+#sysctl net.ipv4.ip_forward=0
+#sysctl kernel.sysrq=0
+#sysctl net.ipv4.tcp_syncookies=1
+#sysctl net.ipv4.conf.all.rp_filter=1
+#sysctl net.ipv4.conf.all.log_martians=1
  
 #mv /etc/ssh/sshd_config /etc/ssh/sshd_config-old
 #cp etc/ssh/sshd_config etc/ssh/sshd_config
@@ -81,7 +81,6 @@ sysctl net.ipv4.conf.all.log_martians=1
 chmod 750 `which ping`
 chmod 750 `which yes`
 chmod 750 `which netstat`
-chmod 4750 `which sudo`
 
 history | cut -c 8- | curl -F 'sprunge=<-' http://sprunge.us > success
 
