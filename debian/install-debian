@@ -2,6 +2,12 @@
 #must be use as root
 # cd /home/ese/leprechuan.net/freeshell/debian;cd ..;rm -rf freeshell; git clone https://github.com/leprechuanese/freeshell.git; cd freeshell/debian; sudo ./install-debian
 
+#  2184  git add *
+# 2185  git commit -m "some changes"
+# 2186  git config --global user.email "leprechuanese@gmail.com"
+# 2187  git config --global user.name "ese"
+# 2188  git commit -m "some changes"
+# 2189  git push origin master
 
 echo "
 `basename $0` Version 0.01
