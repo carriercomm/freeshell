@@ -45,8 +45,6 @@ cp etc/sudoers.d/* /etc/sudoers.d/.
 mv /etc/sudoers /etc/sudoers.old
 cp etc/sudoers /etc/sudoers
 
-chmod 0440 /etc/sudoers.d/freeshell
-chmod 0440 /etc/sudoers
 
 mv /etc/adduser.conf /etc/adduser.conf.old
 cp etc/adduser.conf /etc/adduser.conf
@@ -81,6 +79,4 @@ a2enmod userdir
 chmod 750 `which ping`
 chmod 750 `which yes`
 chmod 750 `which netstat`
-
-history | cut -c 8- | curl -F 'sprunge=<-' http://sprunge.us > success
 
