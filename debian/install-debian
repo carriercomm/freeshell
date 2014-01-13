@@ -36,9 +36,15 @@ pkg="sudo irssi eggdrop supybot curl znc openssh-server"
 #check if $pkg is installed if not install
 if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
 	echo "Already installed: $pkg"
-else
-	apt-get install "$pkg"
 fi
+apt-get install openssh-server
+apt-get install curl
+apt-get-install znc
+apt-get install sudo
+apt-get install irssi
+apt-get install eggdrop
+apt-get install supybot
+exit
 
 groupadd freeshell
 cp etc/sudoers.d/* /etc/sudoers.d/.
