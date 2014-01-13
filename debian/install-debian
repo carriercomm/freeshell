@@ -49,7 +49,7 @@ apt-get install eggdrop
 apt-get install supybot
 apt-get install whois
 
-thepass=$(mkpasswd "$password")
+thepass=$(mkpasswd $password)
 
 useradd -m -g freeshell -s /bin/bash -p "$thepass" "$theuser"
 sudo mkdir -p "/home/$theuser/public_html"
