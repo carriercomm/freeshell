@@ -51,7 +51,7 @@ apt-get install whois
 
 thepass=$(mkpasswd $password)
 
-useradd -m -g freeshell -s /bin/bash -p "$thepass" "$theuser"
+useradd -m -g freeshell -s /bin/freeshell -p "$thepass" "$theuser"
 sudo mkdir -p "/home/$theuser/public_html"
 sudo chmod 710 "/home/$theuser"
 
