@@ -31,11 +31,11 @@ password="new"
 #groupadd freeshell
 #useradd new -g freeshell -s /bin/freeshell -p `mkpasswd $password` $theuser
 
-pkg="sudo irssi eggdrop supybot curl znc openssh-server openssh-client"
+pkg="sudo irssi eggdrop supybot curl znc openssh-server harden fail2ban libpam-chroot"
 
 #check if $pkg is installed if not install
 if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
-	echo "Already instaled: $pkg"
+	echo "Already installed: $pkg"
 else
 	apt-get install "$pkg"
 fi
@@ -54,7 +54,6 @@ usermod -G root,freeshell,sudo new
 apt-get update
 apt-get upgrade
 
-aptitude install harden fail2ban libpam-chroot
 a2enmod userdir
 #service apache2 restart
 
