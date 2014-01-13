@@ -25,18 +25,17 @@ fi
 theuser="new"
 password="new"
 
-#mv bin/freeshell /bin/freeshell
-#echo "/bin/freeshell" >> /etc/shells
-#chmod +x  /bin/freeshell
-#groupadd freeshell
-#useradd new -g freeshell -s /bin/freeshell -p `mkpasswd $password` $theuser
+mv bin/freeshell /bin/freeshell
+echo "/bin/freeshell" >> /etc/shells
+chmod +x  /bin/freeshell
+groupadd freeshell
 
 pkg="sudo irssi eggdrop supybot curl znc openssh-server"
 
 #check if $pkg is installed if not install
-if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
-	echo "Already installed: $pkg"
-fi
+#if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
+#	echo "Already installed: $pkg"
+#fi
 
 apt-get update
 apt-get upgrade
@@ -48,9 +47,15 @@ apt-get install sudo
 apt-get install irssi
 apt-get install eggdrop
 apt-get install supybot
-exit
 
-groupadd freeshell
+thepass=$(makepasswd "$password")
+
+useradd -m -g freeshell -s /bin/bash -p "$thepass" "$theuser"
+sudo mkdir -p "/home/$theuser/public_html"
+sudo chmod 710 "/home/$theuser"
+
+
+
 cp etc/sudoers.d/* /etc/sudoers.d/.
 mv /etc/sudoers /etc/sudoers.old
 cp etc/sudoers /etc/sudoers
@@ -82,7 +87,7 @@ usermod -G root,freeshell,sudo new
 #mv /etc/ssh/sshd_config /etc/ssh/sshd_config-old
 #cp etc/ssh/sshd_config etc/ssh/sshd_config
 
-chmod 750 `which ping`
-chmod 750 `which yes`
-chmod 750 `which netstat`
+#chmod 750 `which ping`
+#chmod 750 `which yes`
+#chmod 750 `which netstat`
 
