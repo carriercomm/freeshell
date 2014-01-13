@@ -31,7 +31,7 @@ password="new"
 #groupadd freeshell
 #useradd new -g freeshell -s /bin/freeshell -p `mkpasswd $password` $theuser
 
-pkg="sudo irssi eggdrop supybot curl znc openssh-server harden fail2ban libpam-chroot"
+pkg="sudo irssi eggdrop supybot curl znc openssh-server"
 
 #check if $pkg is installed if not install
 if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
