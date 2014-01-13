@@ -54,7 +54,7 @@ usermod -G root,freeshell,sudo new
 apt-get update
 apt-get upgrade
 
-a2enmod userdir
+#a2enmod userdir
 #service apache2 restart
 
 #mv /etc/security/limits.conf /etc/security/limits.conf-old
