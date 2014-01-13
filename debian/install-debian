@@ -1,6 +1,7 @@
 #!/bin/bash
 #must be use as root
-#
+# cd /home/ese/leprechuan.net/freeshell/debian;cd ..;rm -rf freeshell; git clone https://github.com/leprechuanese/freeshell.git; cd freeshell/debian; sudo ./install-debian
+
 
 echo "
 `basename $0` Version 0.01
