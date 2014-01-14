@@ -1,6 +1,6 @@
 #!/bin/bash
 #must be use as root
-# cd /home/ese/leprechuan.net/freeshell/debian;cd ..;rm -rf freeshell; git clone https://github.com/leprechuanese/freeshell.git; cd freeshell/debian; sudo ./install-debian
+# mkdir -p /home/ese/leprechuan.net/freeshell/debian; sudo userdel -r test; cd /home/ese/leprechuan.net/freeshell/debian;cd ..;rm -rf freeshell; git clone https://github.com/leprechuanese/freeshell.git; cd freeshell/debian; sudo ./install-debian; ssh -l new localhost
 
 #  2184  git add *
 # 2185  git commit -m "some changes"
