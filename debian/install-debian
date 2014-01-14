@@ -37,24 +37,29 @@ echo "/bin/freeshell" >> /etc/shells
 chmod +x  /bin/freeshell
 groupadd freeshell
 
-pkg="sudo irssi eggdrop supybot curl znc openssh-server"
+#array=( zero one two three four five )
+pkg=(whois sudo irssi eggdrop supybot curl znc openssh-server)
 
 #check if $pkg is installed if not install
 #if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
 #	echo "Already installed: $pkg"
 #fi
 
-apt-get update
-apt-get upgrade
+apt-get -y update
+apt-get -y upgrade
 
-apt-get -y install openssh-server
-apt-get -y install curl
-apt-get -y install znc
-apt-get -y install sudo
-apt-get -y install irssi
-apt-get -y install eggdrop
-apt-get -y install supybot
-apt-get -y install whois
+for i in $pkg; do
+   apt-get -y install "$i"
+done;
+
+#apt-get -y install openssh-server
+#apt-get -y install curl
+#apt-get -y install znc
+#apt-get -y install sudo
+#apt-get -y install irssi
+#apt-get -y install eggdrop
+#apt-get -y install supybot
+#apt-get -y install whois
 
 thepass=$(mkpasswd $password)
 
