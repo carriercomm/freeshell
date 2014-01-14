@@ -47,14 +47,14 @@ pkg="sudo irssi eggdrop supybot curl znc openssh-server"
 apt-get update
 apt-get upgrade
 
-apt-get install openssh-server
-apt-get install curl
-apt-get-install znc
-apt-get install sudo
-apt-get install irssi
-apt-get install eggdrop
-apt-get install supybot
-apt-get install whois
+apt-get -y install openssh-server
+apt-get -y install curl
+apt-get -y install znc
+apt-get -y install sudo
+apt-get -y install irssi
+apt-get -y install eggdrop
+apt-get -y install supybot
+apt-get -y install whois
 
 thepass=$(mkpasswd $password)
 
