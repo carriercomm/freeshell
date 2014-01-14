@@ -180,7 +180,8 @@ sudo chmod 710 "/home/$usuario"
 sudo chgrp www-data  "/home/$usuario/public_html"
 #sudo mkdir -p "/home/$usuario/public-html"
 sudo chmod -R 750 "/home/$usuario/public_html"
-sudo chgrp www-data "/home/$usuario/public_html"
+sudo chgrp $usuario:www-data "/home/$usuario/public_html"
+
 #sudo useradd -m -g freeshell -s /bin/bash -p "$thepass" "$safelogin"
 
 # sudo su znc
