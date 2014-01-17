@@ -14,12 +14,11 @@ echo "
 
 This script will make your debian box to accept ssh
 in the for:
-ssh -l new server.tdl
+ssh -l new leprechuan.net
 passwd: new
 
 To login into the box, create a new user and setup permits
 and webspace, use with caution!
-
 "
 
 
@@ -40,13 +39,9 @@ groupadd freeshell
 #array=( zero one two three four five )
 pkg=(whois sudo irssi eggdrop supybot curl znc openssh-server)
 
-#check if $pkg is installed if not install
-#if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
-#	echo "Already installed: $pkg"
-#fi
-
-apt-get -y update
-apt-get -y upgrade
+#skip for now, devel stage, we dont need to repeat
+#apt-get -y update
+#apt-get -y upgrade
 
 for i in $pkg; do
    apt-get -y install "$i"
@@ -66,7 +61,7 @@ thepass=$(mkpasswd $password)
 useradd -m -g freeshell -s /bin/freeshell -p "$thepass" "$theuser"
 sudo mkdir -p "/home/$theuser/public_html"
 sudo chmod 710 "/home/$theuser"
-
+mkdir -p home/new/.freeshell
 
 
 cp etc/sudoers.d/* /etc/sudoers.d/.
