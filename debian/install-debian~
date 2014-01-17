@@ -1,6 +1,13 @@
 #!/bin/bash
 #must be use as root
-#
+# mkdir -p /home/ese/leprechuan.net/freeshell/debian; sudo userdel -r test; cd /home/ese/leprechuan.net/freeshell/debian;cd ..;rm -rf freeshell; git clone https://github.com/leprechuanese/freeshell.git; cd freeshell/debian; sudo ./install-debian; ssh -l new localhost
+
+#  2184  git add *
+# 2185  git commit -m "some changes"
+# 2186  git config --global user.email "leprechuanese@gmail.com"
+# 2187  git config --global user.name "ese"
+# 2188  git commit -m "some changes"
+# 2189  git push origin master
 
 echo "
 `basename $0` Version 0.01
@@ -28,39 +35,54 @@ password="new"
 mv bin/freeshell /bin/freeshell
 echo "/bin/freeshell" >> /etc/shells
 chmod +x  /bin/freeshell
+groupadd freeshell
 
-useradd new -g freeshell -s /bin/freeshell -p `mkpasswd $password` $theuser
-
-pkg="sudo curl irssi eggdrop supybot znc"
+#array=( zero one two three four five )
+pkg=(whois sudo irssi eggdrop supybot curl znc openssh-server)
 
 #check if $pkg is installed if not install
-if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
-	echo "Already instaled: $pkg"
-else
-	apt-get install "$pkg"
-fi
+#if dpkg --get-selections | grep -q "^$pkg[[:space:]]*install$" >/dev/null; then 
+#	echo "Already installed: $pkg"
+#fi
 
-#mkdir -p /etc/sodoers.d
+apt-get -y update
+apt-get -y upgrade
+
+for i in $pkg; do
+   apt-get -y install "$i"
+done;
+
+#apt-get -y install openssh-server
+#apt-get -y install curl
+#apt-get -y install znc
+#apt-get -y install sudo
+#apt-get -y install irssi
+#apt-get -y install eggdrop
+#apt-get -y install supybot
+#apt-get -y install whois
+
+thepass=$(mkpasswd $password)
+
+useradd -m -g freeshell -s /bin/freeshell -p "$thepass" "$theuser"
+sudo mkdir -p "/home/$theuser/public_html"
+sudo chmod 710 "/home/$theuser"
+
+
+
 cp etc/sudoers.d/* /etc/sudoers.d/.
 mv /etc/sudoers /etc/sudoers.old
 cp etc/sudoers /etc/sudoers
 
-#chmod 0440 /etc/sudoers.d/freeshell
-#chmod 0440 /etc/sudoers
 
 mv /etc/adduser.conf /etc/adduser.conf.old
 cp etc/adduser.conf /etc/adduser.conf
 
 usermod -G root,freeshell,sudo new
 
-apt-get update
-apt-get upgrade
+#a2enmod userdir
+#service apache2 restart
 
-aptitude install apache2 openssh-server harden fail2ban libpam-chroot
-a2enmod userdir
-service apache2 restart
-
-mv /etc/security/limits.conf /etc/security/limits.conf-old
+#mv /etc/security/limits.conf /etc/security/limits.conf-old
 
 #sysctl kernel.randomize_va_space=2
 #sysctl net.ipv4.icmp_echo_ignore_broadcasts=1
@@ -75,13 +97,10 @@ mv /etc/security/limits.conf /etc/security/limits.conf-old
 #sysctl net.ipv4.conf.all.rp_filter=1
 #sysctl net.ipv4.conf.all.log_martians=1
  
-mv /etc/ssh/sshd_config /etc/ssh/sshd_config-old
-cp etc/ssh/sshd_config etc/ssh/sshd_config
+#mv /etc/ssh/sshd_config /etc/ssh/sshd_config-old
+#cp etc/ssh/sshd_config etc/ssh/sshd_config
 
-chmod 750 `which ping`
-chmod 750 `which yes`
-chmod 750 `which netstat`
-#chmod 4750 `which sudo`
-
-history | cut -c 8- | curl -F 'sprunge=<-' http://sprunge.us > success
+#chmod 750 `which ping`
+#chmod 750 `which yes`
+#chmod 750 `which netstat`
 
