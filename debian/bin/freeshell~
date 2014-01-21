@@ -53,17 +53,14 @@ chke() {
 } #chke (check email)
 
 ckemail() {
-echo "$1, in ckemail()"
 	em=$1
 	if $(inarray "$em" "${emails[@]}"); then
-		echo "Email $em already used."
+		echo "Email $em already been used."
 		exit 1
 	fi
 } #ckemail()
 
 addemail() {
-echo "$1"
-cat "$EMAIL_FILE"
 	echo "$1" >> "$EMAIL_FILE"
 } #addemail()
 
@@ -205,6 +202,33 @@ EOF
   		exit
 	fi
 } #checkemail
+welcome() {
+
+	u=$1
+	email=$2 
+	password=$3
+
+cat << EOF
+Your account ssh access its been hold into you request
+access by entering irc.freenode.net channel #leprechuan
+and request for ssh access.
+
+Please note, after user creation, '$u' details will be send to:
+$em
+
+Check your Spam Box, if you do not see any email from us.
+if you lost your user information, request an new confirmation email to:
+new@leprechuan.net
+
+This email will contain important information with your credentials
+to access your services, make sure you read it!
+
+Ready to add '$u' in our system..
+
+Please confirm 'y' to add your user, any other character to abort..
+By answering 'y' you agree to our terms and policies."
+EOF
+} #welcome()
 
 if (( ! DEBUG )); then
 	motd
@@ -213,46 +237,20 @@ if (( ! DEBUG )); then
 	blacklisted "$u"
 	getpasswd
 	checkifuserexist "$u"
+	getemail
+	cherror=$(chke "$em")
+	if (( "$cherror" )); then echo "Invalid email address!";exit 1; fi
+	ckemail "$em"
+	addemail "$em"
 else
  	u="abcd"
 	password="abcdabcd"
+	em="ese@leprechuan.net"
 fi # if DEBUG
 
-getemail
-cherror=$(chke "$em")
-if (( "$cherror" )); then echo "Invalid email address!";exit 1; fi
-
-ckemail "$em"
-addemail "$em"
+welcome $u $em $password
 
 exit
-
-echo "
-
-Email address match!
-
-Please note, after user creation, '$usuario' details will be send to:
-
-$em
-
-Please check your Spam Box if you do not see an email containing
-your user information or request a new email to:
-
-new@leprechuan.net
-
-This email will contain important information with your credentials
-to access our service and details about your znc, emails, public_html
-ssh and soo on, make sure you read it!
-
-"
-respuesta="y"
-echo "
-
-Ready to add '$usuario' in our system..
-
-Please confirm 'y' to add your user, any other character to abort..
-By answering 'y' you agree to our terms and policies."
-
 echo -n "Are you sure you wnat to add '$usuario'? "
 read correcto
 if [ "$correcto" != "$respuesta" ] ; then
