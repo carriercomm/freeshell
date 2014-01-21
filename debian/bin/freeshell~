@@ -52,6 +52,22 @@ chke() {
 	if [ "x$ADVANCED_RESULT" = "x" ]; then echo 1; exit; fi
 } #chke (check email)
 
+ckemail() {
+echo "$1, in ckemail()"
+	em=$1
+	if $(inarray "$em" "${emails[@]}"); then
+		echo "Email $em already used."
+		exit 1
+	fi
+} #ckemail()
+
+addemail() {
+echo "$1"
+cat "$EMAIL_FILE"
+	echo "$1" >> "$EMAIL_FILE"
+} #addemail()
+
+
 motd() {
 cat << EOF
 $UNAME $VERSION
@@ -206,6 +222,8 @@ getemail
 cherror=$(chke "$em")
 if (( "$cherror" )); then echo "Invalid email address!";exit 1; fi
 
+ckemail "$em"
+addemail "$em"
 
 exit
 
