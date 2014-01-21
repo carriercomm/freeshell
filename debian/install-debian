@@ -63,8 +63,8 @@ sudo mkdir -p "/home/$theuser/public_html"
 sudo chmod 710 "/home/$theuser"
 sudo mkdir -p /home/new/.freeshell
 sudo cp home/new/.freeshell/username.blacklist /home/new/.freeshell/.
+sudo cp home/new/.freeshell/email /home/new/.freeshell/.
 sudo chown ese:freeshell -R /home/new/.freeshell
-
 
 cp etc/sudoers.d/* /etc/sudoers.d/.
 mv /etc/sudoers /etc/sudoers.old

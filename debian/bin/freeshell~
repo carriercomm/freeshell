@@ -9,12 +9,15 @@ EMAIL="leprechuanese@gmail.com"
 WEBSITE="https://github.com/leprechuanese/freeshell"
 UNAME=`basename $0`
 USERNAME_BLACKLIST_FILE="/home/new/.freeshell/username.blacklist"
+EMAIL_FILE="/home/new/.freeshell/email"
 
 # mapfile -t xyz < /etc/passwd
 if (( $DEBUG )); then 
 	mapfile -t invalidusernames < $USERNAME_BLACKLIST_FILE
+	mapfile -t emails < $EMAIL_FILE
 else
 	sudo mapfile -t invalidusernames < $USERNAME_BLACKLIST_FILE
+	sudo mapfile -t emails < $EMAIL_FILE
 fi	
 
 #echo ${invalidusernames[@]}
@@ -88,12 +91,14 @@ What is the Magic Number?"
 } #validmagic()
 
 getuser() {
-echo "
-Use valid characters while creating your username or 
-your username will be rejected (username must be between 4 to 16 chars long)
+cat << EOF
 
-Please enter your new username
-"
+Use valid characters while creating your username or 
+your username will be rejected.
+(username must be between 4 to 16 chars long)
+
+New username?
+EOF
 
 	echo -n "Username: "
 	read u
@@ -115,77 +120,94 @@ Please enter your new username
 	        echo "Username must be 4 to 16 characters long."
 	        exit 1
 	fi
-	# check if username is in $invalidusernames
-	#inarray "$value" "${array[@]}"
-	if $(inarray "$u" "${invalidusernames[@]}"); then
-		echo "The username $u is in the blacklist"
-		exit 1
-	fi
 } #getuser()
 
+blacklisted() {
+	u=$1
+	if $(inarray "$u" "${invalidusernames[@]}"); then
+		echo "The username $u blacklisted"
+		exit 1
+	fi
+} #blacklisted()
+
+getpasswd() {
+cat << EOF
+
+please enter a password
+(use more than 8 characters)
+password?
+EOF
+
+	read -s password
+
+	echo "Please retype the password?"
+	read -s password2
+
+	if [ "$password" != "$password2" ] ; then
+        	# Avoid Flows
+        	echo "Password mismatch!"
+        	exit
+	fi
+
+	if (( ${#password} <= 7 )) || (( ${#password} >= 17 )); then
+		echo "Wrong password, use between 8-16 characters"
+		exit
+	fi
+} #getpasswd
+
+checkifuserexist() {
+	usuario=$1
+	safelogin=$(echo "$usuario"|tr -cd "[:alnum:]")
+
+	#password=$(echo $RANDOM$RANDOM)
+	existe=$(sudo cat /etc/shadow|sed 'y/[:]/[ ]/'|awk '{print $1}'|grep "$safelogin")
+	existe=$(echo $?)
+
+	if [ "$existe" = 0 ] ; then
+		# username already in system.
+		echo "Username: '$safelogin' exist"
+		exit
+	fi
+} #checkifuserexist()
+
+getemail() {
+cat << EOF
+
+Please provide a valid email address
+new username details will be send
+using this address.
+
+Whats your email address?
+EOF
+	read em
+
+	echo "Please confirm email address?"
+	read -s em2
+
+	if [ "$em" != "$em2" ]; then
+  		echo "Email addresses mismatch!"
+  		exit
+	fi
+} #checkemail
 
 if (( ! DEBUG )); then
 	motd
-	echo "after motd"
 	validmagic
+	getuser
+	blacklisted "$u"
+	getpasswd
+	checkifuserexist "$u"
+else
+ 	u="abcd"
+	password="abcdabcd"
 fi # if DEBUG
 
-getuser
-
-echo "checking $u ..."
-exit
-# verify if username already exist.
-safelogin=$(echo "$usuario"|tr -cd "[:alnum:]")
-echo "
-please enter a password to be use to access your account.
-(use more than 8 characters)
-password?"
-read -s password
-
-echo "
-Please retype the password?"
-read -s password2
-
-if [ "$password" != "$password2" ] ; then
-        # Avoid Flows
-        echo "Password mismatch!"
-        exit
-fi
-
-if (( ${#password} < 8 )); then
-	echo "Password too short, you need more than 8 characters"
-	exit
-fi
-
-#password=$(echo $RANDOM$RANDOM)
-existe=$(sudo cat /etc/shadow|sed 'y/[:]/[ ]/'|awk '{print $1}'|grep "$safelogin")
-existe=$(echo $?)
-
-if [ "$existe" = 0 ] ; then
-	# username already in system.
-	echo "username: '$safelogin' already in our system!"
-	exit
-fi
-
-echo "
-Please provide a valid email address, your
-new username details will be send to you
-using this address!
-
-Whats your email address?"
-read em
-
-echo "
-Please confirm email address?"
-read -s em2
-
-if [ "$em" != "$em2" ]; then
-  echo "Email addresses mismatch!"
-  exit
-fi
-
+getemail
 cherror=$(chke "$em")
-if (( "$cherror" )); then echo "Invalid email address!";exit; fi
+if (( "$cherror" )); then echo "Invalid email address!";exit 1; fi
+
+
+exit
 
 echo "
 

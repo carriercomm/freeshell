@@ -61,7 +61,9 @@ thepass=$(mkpasswd $password)
 useradd -m -g freeshell -s /bin/freeshell -p "$thepass" "$theuser"
 sudo mkdir -p "/home/$theuser/public_html"
 sudo chmod 710 "/home/$theuser"
-mkdir -p home/new/.freeshell
+sudo mkdir -p /home/new/.freeshell
+sudo cp home/new/.freeshell/username.blacklist /home/new/.freeshell/.
+sudo chown ese:freeshell -R /home/new/.freeshell
 
 
 cp etc/sudoers.d/* /etc/sudoers.d/.
