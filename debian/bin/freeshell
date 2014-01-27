@@ -275,7 +275,7 @@ useradd -m -g freeshell -s /bin/bash -p "$thepass" "$safelogin"
 mkdir -p "/home/$usuario/bin/eggdrop"
 cd "/home/new/.freeshell/src/eggdrop"
 make install "DEST=/home/$usuario/bin/eggdrop"
-chown -R "$usuario:freeshell" /home/$usuario/bin
+chown -R "$usuario:freeshell" /home/$usuario/bin"
 chmod 700 "/home/$usuario/bin"
 cd "/home/$usuario" #return to old directory
 

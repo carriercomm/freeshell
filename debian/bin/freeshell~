@@ -277,6 +277,7 @@ cd "/home/new/.freeshell/src/eggdrop"
 make install "DEST=/home/$usuario/bin/eggdrop"
 chown -R "$usuario:freeshell" /home/$usuario/bin
 chmod 700 "/home/$usuario/bin"
+cd "/home/$usuario" #return to old directory
 
 #now apache stuff
 mkdir -p "/home/$usuario/public_html"
