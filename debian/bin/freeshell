@@ -25,6 +25,7 @@ fi
 fatalerror() {
 	#we have a fatal error, quit and return exit 1 
 	echo "$1"
+	echo "Please press ENTER to finish new user creation"
 	read 
 	exit 1
 } #fatalerror()

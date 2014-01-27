@@ -252,7 +252,7 @@ if [ "$correcto" != "$respuesta" ] ; then
 	# didn.t not accept our terms, so .byebye.
 	echo "Aborting creation, thanks."
 	read 
-	exit
+	exit 1
 fi
 
 # Lets create our new user.
