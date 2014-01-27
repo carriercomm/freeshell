@@ -22,6 +22,13 @@ fi
 
 #echo ${invalidusernames[@]}
 
+fatalerror() {
+	#we have a fatal error, quit and return exit 1 
+	echo "$1"
+	read 
+	exit 1
+} #fatalerror()
+
 verbose(){
         msg="$2"
         if (( VERBOSE )); then
@@ -55,8 +62,7 @@ chke() {
 ckemail() {
 	em=$1
 	if $(inarray "$em" "${emails[@]}"); then
-		echo "Email $em already been used."
-		exit 1
+		fatalerror "Email $em already been used."
 	fi
 } #ckemail()
 
@@ -97,8 +103,7 @@ What is the Magic Number?"
 
 	if [ "$num2" != "$num1" ] ; then
 		# Avoid Flows
-		echo "Sorry, Wrong Magic Number!"
-		exit 1
+		fatalerror "Sorry, Wrong Magic Number!"
 	fi
 
 } #validmagic()
@@ -118,28 +123,24 @@ EOF
 
 	if [ "$u" = "" ] ; then
 		# username is null.
-		echo "you must provide a valid username."
-		exit 1
+		fatalerror "you must provide a valid username."
 	fi
 
 	hacklogin=$(echo "$u" | tr -d "|;\1404247134176$")
 	if [[ $u = *[![abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]]* ]]; then
 		# dangerous caracteres.
-		echo "Username enter was empty, Invalid Username."
-		exit 1
+		fatalerror "Username enter was empty, Invalid Username."
 	fi
 
 	if (( ${#u} <= 3 )) || (( ${#u} >= 17 )); then
-	        echo "Username must be 4 to 16 characters long."
-	        exit 1
+	        fatalerror "Username must be 4 to 16 characters long."
 	fi
 } #getuser()
 
 blacklisted() {
 	u=$1
 	if $(inarray "$u" "${invalidusernames[@]}"); then
-		echo "The username $u blacklisted"
-		exit 1
+		fatalerror "The username $u blacklisted"
 	fi
 } #blacklisted()
 
@@ -158,17 +159,14 @@ EOF
 
 	if [ "$password" != "$password2" ] ; then
         	# Avoid Flows
-        	echo "Password mismatch!"
-        	exit 1
+        	fatalerror "Password mismatch!"
 	fi
 
 	if (( ${#password} <= 7 )) || (( ${#password} >= 17 )); then
-		echo "Wrong password, use between 8-16 characters"
-		exit 1
+		fatalerror "Wrong password, use between 8-16 characters"
 	fi
 	if [[ "$password" == "$u" ]]; then
-		echo "$password and $u are the same, not allowed"
-		exit 1
+		fatalerror "$password and $u are the same, not allowed"
 	fi
 } #getpasswd
 
@@ -182,8 +180,7 @@ checkifuserexist() {
 
 	if [ "$existe" = 0 ] ; then
 		# username already in system.
-		echo "Username: '$safelogin' exist"
-		exit
+		fatalerror "Username: '$safelogin' exist"
 	fi
 } #checkifuserexist()
 
@@ -202,10 +199,10 @@ EOF
 	read -s em2
 
 	if [ "$em" != "$em2" ]; then
-  		echo "Email addresses mismatch!"
-  		exit
+  		fatalerror "Email addresses mismatch!"
 	fi
 } #checkemail
+
 welcome() {
 
 	u=$1
@@ -255,7 +252,7 @@ if [ "$correcto" != "$respuesta" ] ; then
 	# didn.t not accept our terms, so .byebye.
 	echo "Aborting creation, thanks."
 	read 
-	exit
+	exit 1
 fi
 
 # Lets create our new user.
