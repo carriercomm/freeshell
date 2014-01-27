@@ -9,6 +9,9 @@
 # 2188  git commit -m "some changes"
 # 2189  git push origin master
 
+#Some vars
+DEBUG=1
+
 echo "
 `basename $0` Version 0.01
 
@@ -21,38 +24,50 @@ To login into the box, create a new user and setup permits
 and webspace, use with caution!
 "
 
-
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
-fi
+if (( ! $DEBUG )); then 
+	if [[ $EUID -ne 0 ]]; then
+   	echo "This script must be run as root" 1>&2
+   	exit 1
+	fi
+fi #if NOT DEBUG
 
 #please modify if you want any different
 theuser="new"
 password="new"
 
-mv bin/freeshell /bin/freeshell
-echo "/bin/freeshell" >> /etc/shells
-chmod +x  /bin/freeshell
-groupadd freeshell
+#eggdrop stuff
+#where the eggdrop version resides
+EGGDROP_URI="ftp://ftp.eggheads.org/pub/eggdrop/source/1.6/eggdrop1.6.21.tar.gz"
+
+#name of the directory after tar zxvf $EGGDROP_URI
+EGGDROP_DIR="eggdrop1.6.21"
+
+#mv bin/freeshell /bin/freeshell
+#echo "/bin/freeshell" >> /etc/shells
+#chmod +x  /bin/freeshell
+#groupadd freeshell
 
 #array=( zero one two three four five )
-pkg=(whois sudo irssi eggdrop supybot curl znc openssh-server)
+#pkg=(whois sudo irssi eggdrop supybot curl znc openssh-server)
 
 #skip for now, devel stage, we dont need to repeat
 #apt-get -y update
 #apt-get -y upgrade
 
-for i in $pkg; do
-   apt-get -y install "$i"
-done;
+#for i in $pkg; do
+#   apt-get -y install "$i"
+#done;
 
 #apt-get -y install openssh-server
 #apt-get -y install curl
 #apt-get -y install znc
+#chown znc:znc $(which znc)
+#chmod 750 $(which znc)
 #apt-get -y install sudo
 #apt-get -y install irssi
-#apt-get -y install eggdrop
+
+##apt-get -y install eggdrop #dont, we gone compile this manually since apt-get dont get us all modules
+
 #apt-get -y install supybot
 #apt-get -y install whois
 
@@ -62,9 +77,25 @@ useradd -m -g freeshell -s /bin/freeshell -p "$thepass" "$theuser"
 sudo mkdir -p "/home/$theuser/public_html"
 sudo chmod 710 "/home/$theuser"
 sudo mkdir -p /home/new/.freeshell
-sudo cp home/new/.freeshell/username.blacklist /home/new/.freeshell/.
-sudo chown ese:freeshell -R /home/new/.freeshell
 
+#eggdrop
+sudo mkdir -p /home/new/.freeshell/bin
+sudo mkdir -p /home/new/.freeshell/src
+sudo cd /home/new/.freeshell/bin/src
+sudo wget $EGGDROP_URI
+sudo tar zxvf $EGGDROP_DIR.tar.gz
+sudo cd $EGGDROP_DIR
+sudo ./configure
+sudo make config
+sudo make
+sudo chmod -R 700 /home/new/.freeshell
+
+
+#reclaim averything
+sudo cd /home/.new/.freeshell
+sudo cp home/new/.freeshell/username.blacklist /home/new/.freeshell/.
+sudo cp home/new/.freeshell/email /home/new/.freeshell/.
+sudo chown ese:freeshell -R /home/new/.freeshell
 
 cp etc/sudoers.d/* /etc/sudoers.d/.
 mv /etc/sudoers /etc/sudoers.old

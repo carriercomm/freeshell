@@ -80,7 +80,7 @@ to our free service. Remember, it is important
 for you to respect our service, as other users
 do like using us. Also, you may freely browse
 the web by entering w3m then the url. If you have
- any questions or concerns, please email them us.
+any questions or concerns, please email them us.
 
 Thanks again for using our service, and have a safe day.
 
@@ -159,12 +159,16 @@ EOF
 	if [ "$password" != "$password2" ] ; then
         	# Avoid Flows
         	echo "Password mismatch!"
-        	exit
+        	exit 1
 	fi
 
 	if (( ${#password} <= 7 )) || (( ${#password} >= 17 )); then
 		echo "Wrong password, use between 8-16 characters"
-		exit
+		exit 1
+	fi
+	if [[ "$password" == "$u" ]]; then
+		echo "$password and $u are the same, not allowed"
+		exit 1
 	fi
 } #getpasswd
 
@@ -206,27 +210,20 @@ welcome() {
 
 	u=$1
 	email=$2 
-	password=$3
 
 cat << EOF
-Your account ssh access its been hold into you request
+Your account ssh access its been hold, Request
 access by entering irc.freenode.net channel #leprechuan
-and request for ssh access.
 
 Please note, after user creation, '$u' details will be send to:
 $em
-
-Check your Spam Box, if you do not see any email from us.
-if you lost your user information, request an new confirmation email to:
+Check your Spam Box, or request an new confirmation email to:
 new@leprechuan.net
-
-This email will contain important information with your credentials
-to access your services, make sure you read it!
-
-Ready to add '$u' in our system..
+Email contain important information to access services.
+Ready to add '$u'
 
 Please confirm 'y' to add your user, any other character to abort..
-By answering 'y' you agree to our terms and policies."
+By answering 'y' you agree to our terms and policies.
 EOF
 } #welcome()
 
@@ -242,13 +239,14 @@ if (( ! DEBUG )); then
 	if (( "$cherror" )); then echo "Invalid email address!";exit 1; fi
 	ckemail "$em"
 	addemail "$em"
+	welcome $u $em
 else
  	u="abcd"
 	password="abcdabcd"
 	em="ese@leprechuan.net"
 fi # if DEBUG
+	welcome $u $em
 
-welcome $u $em $password
 
 exit
 echo -n "Are you sure you wnat to add '$usuario'? "
@@ -266,9 +264,21 @@ Creating your new user: $usuario
 "
 
 #sudo useradd -g newshell -s /bin/bash -p $(mkpasswd xxx) test2
+
+#make the hash password
 thepass=$(mkpasswd "$password")
-sudo useradd -m -g freeshell -s /bin/bash -p "$thepass" "$safelogin"
-sudo su "$usuario"
+
+#create the user
+useradd -m -g freeshell -s /bin/bash -p "$thepass" "$safelogin"
+
+#install eggdrop
+mkdir -p "/home/$usuario/bin/eggdrop"
+cd "/home/new/.freeshell/src/eggdrop"
+make install "DEST=/home/$usuario/bin/eggdrop"
+chown -R "$usuario:freeshell" /home/$usuario/bin
+chmod 700 "/home/$usuario/bin"
+
+#now apache stuff
 mkdir -p "/home/$usuario/public_html"
 chmod 710 "/home/$usuario"
 chgrp www-data  "/home/$usuario/public_html"
